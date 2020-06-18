@@ -41,5 +41,5 @@ for await (const file of walk("pem")) {
 
   fileContent = fileContent.substr(fileContent.indexOf("-----BEGIN CERTIFICATE-----"))
 
-  await writeFileStr(validName, fileContent)
+  await writeFileStr(resultName, fileContent)
 }
