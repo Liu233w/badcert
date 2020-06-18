@@ -9,7 +9,6 @@ for await (const file of walk("pem")) {
 
   let fileContent = await readFileStr(file.path)
   fileContent = fileContent.trim()
-  await writeFileStr("./cer/temp.pem", fileContent)
 
   const cn = fileContent.split(/\r?\n/)[0]
     .match(/CN = (.*)/)![1];
@@ -40,17 +39,7 @@ for await (const file of walk("pem")) {
     }
   }
 
-  await Deno.run({
-    cmd: ["openssl", "x509", "-outform", "der", "-in", "cer/temp.pem", "-out", resultName],
-    stderr: "piped",
-    stdout: "piped",
-  }).status()
+  fileContent = fileContent.substr(fileContent.indexOf("-----BEGIN CERTIFICATE-----"))
+
+  await writeFileStr(validName, fileContent)
 }
-
-await Deno.remove("cer/temp.pem")
-
-// const a = String.raw`\E7\A6\8F\E5\BB\BA\E5\8D\9A\E7\91\9E\E7\BD\91\E7\BB\9C\E7\A7\91\E6\8A\80\E6\9C\89\E9\99\90\E5\85\AC\E5\8F\B8`
-// const b = a.split('\\').slice(1)
-// console.log(b)
-// console.log(new TextDecoder("utf-8").decode(
-//   new Uint8Array(b.map(n => parseInt(n, 16)))))
